@@ -3,6 +3,8 @@ from datetime import date,datetime
 import numpy as np
 import datetime as dt
 import hashlib
+import os
+import pickle
 
 
 name = raw_input("Whats your name ? ")
@@ -34,10 +36,15 @@ def start_calendar():
     user_choice = user_choice.upper()
 
     if (user_choice == 'V'):
-      if(len(calendar.keys()) < 1) :
-        print "Your calendar is empty."
-      else:
-         print calendar,exp
+     if (len(exp.keys()) >= 1) :
+          try:
+              if os.path.isfile("C:/Users/sayan/PycharmProjects/Design_Patterns_Full_Throttle/Design_Patterns/pickle.txt")== True:
+                  infile = open('picke.text', 'w')
+                  newList = pickle.load(infile)
+                  print  newList
+          except IOError:
+              print "File Not Found"
+          print  "Your exception container is empty.", calendar,exp
 
     elif(user_choice == 'U'):
       date = raw_input ('What date ? ')
@@ -89,14 +96,11 @@ def start_calendar():
 
     elif(user_choice == 'S'):
         event = raw_input ('Enter event: ')
-        start_date = raw_input ('Enter start date (MM/DD/YYYY): ')
-        end_date = raw_input('Enter end date (MM/DD/YYYY): ')
-        # start_date, end_date = (map(int, start_date.split('/'))),(map(int, end_date.split('/')))
+        start_date = raw_input ('Enter start date (MM/DD/YY): ')
+        end_date = raw_input('Enter end date (MM/DD/YY): ')
         start_date_f = datetime.strptime(start_date, '%m/%d/%y')
         end_date_f = datetime.strptime(end_date, '%m/%d/%y')
         day_range = daterange( end_date_f, start_date_f)
-        print day_range
-
 
 
     elif(user_choice == 'C'):
@@ -108,17 +112,18 @@ def start_calendar():
         else:
             is_working(date_check_f)
 
-
     elif(user_choice == 'X'):
         start = False
     else:
       print "Invaid command. Calendar is exiting. . ."
 
 def daterange(start_date, end_date):
-    start = dt.date(start_date)
-    end = dt.date(end_date)
-    days = np.busday_count( start, end )
-
+    start = datetime.date(start_date).strftime("%Y-%m-%d")
+    end   = datetime.date(end_date).strftime("%Y-%m-%d")
+    # start = dt.date(start_date)
+    # end = dt.date(end_date)
+    days = np.busday_count( (start), (end) )
+    print "Business days :" + str(days)
 
 def is_working(d):
     print " Desire to check a date is Working or Non-Working ?"
@@ -126,7 +131,6 @@ def is_working(d):
         print "Bummer it's a working day!!"
     else:
         print "Its a Holiday, enjoy!"
-
 
 def exception(d):
     if datetime.date(d).weekday() in [0,1,2,3,4]:
@@ -137,7 +141,13 @@ def exception(d):
         k = datetime.date(d).strftime("%Y-%m-%d")
         hash_obj = hashlib.md5(k)
         exp[k] = hash_obj.hexdigest()
+        persist()
         print exp
 
+def persist():
+    outFile = open('pickle.txt', 'w')
+    pickle.dump(exp, outFile)
+    outFile.close()
+    sleep(1)
 
 start_calendar()
