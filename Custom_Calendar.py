@@ -135,7 +135,7 @@ def daterange(start_date, end_date):
     end   = datetime.date(end_date).strftime("%Y-%m-%d")            #if len(exp.keys())>=1:
     # start = dt.date(start_date)                                        call data_parser()
     # end = dt.date(end_date)                                         call np
-    days = np.busday_count( (start), (end) )
+    days = abs(np.busday_count( (start), (end) ))
     print "Business days :" + str(days)
 
 def is_working(d):
